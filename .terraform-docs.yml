@@ -1,0 +1,14 @@
+formatter: "markdown document"
+
+header-from: main.tf
+footer-from: versions.tf
+
+output:
+  file: "README.md"
+  mode: inject
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    ---
+    <sup><sub>_2024 &copy; All rights reserved - WANTED.solutions s.r.o. [<@wanted-solutions>](https://github.com/wanted-solutions)_</sub></sup>
+    <!-- END_TF_DOCS -->
