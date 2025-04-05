@@ -1,21 +1,21 @@
 output "virtual_network_id" {
   description = "The ID of the virtual network."
-  value       = azurerm_virtual_network.this.id
+  value       = azurerm_virtual_network.this[0].id
 }
 
 output "virtual_network_name" {
   description = "The name of the virtual network."
-  value       = azurerm_virtual_network.this.name
+  value       = azurerm_virtual_network.this[0].name
 }
 
 output "virtual_network_address_space" {
   description = "The address space of the virtual network."
-  value       = azurerm_virtual_network.this.address_space
+  value       = azurerm_virtual_network.this[0].address_space
 }
 
 output "virtual_network_dns_servers" {
   description = "The DNS servers of the virtual network."
-  value       = length(var.dns_servers) > 0 ? azurerm_virtual_network.this.dns_servers[0] : null
+  value       = length(var.dns_servers) > 0 ? azurerm_virtual_network.this[0].dns_servers[0] : null
 }
 
 output "virtual_network_private_dns_links" {

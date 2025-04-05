@@ -3,34 +3,29 @@
 
 Terraform building block for creation and management of Azure Virtual Network and related resources.
 
+## Table of contents
+
+- [Requirements](#requirements)
+- [Providers](#providers)
+- [Variables](#inputs)
+- [Outputs](#outputs)
+- [Resources](#resources)
+- [Usage](#usage)
+- [Contributing](#contributing)
+
 ## Requirements
 
 The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>=3.113.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>=4.17.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>=3.113.0)
-
-## Modules
-
-No modules.
-
-## Resources
-
-The following resources are used by this module:
-
-- [azurerm_private_dns_zone_virtual_network_link.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) (resource)
-- [azurerm_virtual_network.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
-- [azurerm_virtual_network_dns_servers.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_dns_servers) (resource)
-- [azurerm_virtual_network_peering.in](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) (resource)
-- [azurerm_virtual_network_peering.out](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) (resource)
-- [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) (data source)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>=4.17.0)
 
 ## Required Inputs
 
@@ -38,19 +33,19 @@ The following input variables are required:
 
 ### <a name="input_address_spaces"></a> [address\_spaces](#input\_address\_spaces)
 
-Description: The address spaces that will be used by the virtual network
+Description: The address spaces that will be used by the virtual network.
 
 Type: `list(string)`
 
-### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
+### <a name="input_name"></a> [name](#input\_name)
 
-Description: The location/region where the virtual network will be created
+Description: The name of the virtual network to be provisioned.
 
 Type: `string`
 
-### <a name="input_virtual_network_name"></a> [virtual\_network\_name](#input\_virtual\_network\_name)
+### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
 
-Description: The name of the virtual network
+Description: The location/region where the virtual network will be created.
 
 Type: `string`
 
@@ -68,7 +63,7 @@ Default: `""`
 
 ### <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers)
 
-Description: The DNS servers that will be used by the virtual network
+Description: The DNS servers that will be used by the virtual network.
 
 Type: `list(string)`
 
@@ -90,16 +85,29 @@ Type: `number`
 
 Default: `30`
 
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The location/region where the virtual network will be created.
+
+Type: `string`
+
+Default: `"North Europe"`
+
 ### <a name="input_metadata"></a> [metadata](#input\_metadata)
 
-Description: Module metadata object to give user possibility to override default module values.
+Description: Metadata definitions for the module, this is optional construct allowing override of the module defaults defintions of validation expressions, error messages, resource timeouts and default tags.
 
 Type:
 
 ```hcl
 object({
-    default_tags             = optional(map(string), {})
-    resource_timeouts        = optional(map(map(string)), {})
+    resource_timeouts = optional(object({
+      create = optional(string, "30m")
+      read   = optional(string, "5m")
+      update = optional(string, "30m")
+      delete = optional(string, "30m")
+    }), {})
+    tags                     = optional(map(string), {})
     validator_error_messages = optional(map(string), {})
     validator_expressions    = optional(map(string), {})
   })
@@ -109,7 +117,7 @@ Default: `{}`
 
 ### <a name="input_private_dns_zones"></a> [private\_dns\_zones](#input\_private\_dns\_zones)
 
-Description: The private DNS zones that will be linked to the virtual network
+Description: The private DNS zones that will be linked to the virtual network.
 
 Type:
 
@@ -122,6 +130,14 @@ list(object({
 ```
 
 Default: `[]`
+
+### <a name="input_subnet_management_enabled"></a> [subnet\_management\_enabled](#input\_subnet\_management\_enabled)
+
+Description: Whether subnet management is enabled within this virtual network module, if false you can use subnet module for IaC management of subnet by achieving state separation.
+
+Type: `bool`
+
+Default: `false`
 
 ### <a name="input_subnets"></a> [subnets](#input\_subnets)
 
@@ -150,7 +166,7 @@ Default: `[]`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
-Description: Key value pairs of custom tags to be applied to the module resources.
+Description: A mapping of tags to assign to the virtual network resource.
 
 Type: `map(string)`
 
@@ -175,9 +191,73 @@ Default: `[]`
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
 
-Created by WANTED.solutions s.r.o.
+### <a name="output_virtual_network_address_space"></a> [virtual\_network\_address\_space](#output\_virtual\_network\_address\_space)
+
+Description: The address space of the virtual network.
+
+### <a name="output_virtual_network_dns_servers"></a> [virtual\_network\_dns\_servers](#output\_virtual\_network\_dns\_servers)
+
+Description: The DNS servers of the virtual network.
+
+### <a name="output_virtual_network_id"></a> [virtual\_network\_id](#output\_virtual\_network\_id)
+
+Description: The ID of the virtual network.
+
+### <a name="output_virtual_network_name"></a> [virtual\_network\_name](#output\_virtual\_network\_name)
+
+Description: The name of the virtual network.
+
+### <a name="output_virtual_network_peerings"></a> [virtual\_network\_peerings](#output\_virtual\_network\_peerings)
+
+Description: The virtual network peerings.
+
+### <a name="output_virtual_network_private_dns_links"></a> [virtual\_network\_private\_dns\_links](#output\_virtual\_network\_private\_dns\_links)
+
+Description: The private DNS zone virtual network links.
+
+## Resources
+
+The following resources are used by this module:
+
+- [azurerm_private_dns_zone_virtual_network_link.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) (resource)
+- [azurerm_virtual_network.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
+- [azurerm_virtual_network_dns_servers.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_dns_servers) (resource)
+- [azurerm_virtual_network_peering.in](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) (resource)
+- [azurerm_virtual_network_peering.out](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) (resource)
+- [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) (data source)
+
+## Usage
+
+> For more detailed examples navigate to `examples` folder of this repository.
+
+Module was also published via Terraform Registry and can be used as a module from the registry.
+
+```hcl
+module "example" {
+  source  = "wanted-cloud/resource-provider-registration/azure"
+  version = "x.y.z"
+}
+```
+
+### Basic usage example
+
+The minimal usage for the module is as follows:
+
+```hcl
+module "example" {
+    source               = "../.."
+    name                 = "example-vnet"
+    resource_group_name  = "example-resource-group"
+    address_spaces       = ["10.0.0.0/16"]
+}
+```
+## Contributing
+
+_Contributions are welcomed and must follow [Code of Conduct](https://github.com/wanted-cloud/.github?tab=coc-ov-file) and common [Contributions guidelines](https://github.com/wanted-cloud/.github/blob/main/docs/CONTRIBUTING.md)._
+
+> If you'd like to report security issue please follow [security guidelines](https://github.com/wanted-cloud/.github?tab=security-ov-file).
 ---
-<sup><sub>_2024 &copy; All rights reserved - WANTED.solutions s.r.o. [<@wanted-solutions>](https://github.com/wanted-solutions)_</sub></sup>
+<sup><sub>_2025 &copy; All rights reserved - WANTED.solutions s.r.o._</sub></sup>
 <!-- END_TF_DOCS -->

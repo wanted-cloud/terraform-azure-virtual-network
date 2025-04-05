@@ -7,7 +7,7 @@ variable "name" {
     condition = can(
       regex(
         local.metadata.validator_expressions.virtual_network_name,
-        var.virtual_network_name
+        var.name
       )
     )
   }
@@ -96,6 +96,13 @@ variable "tags" {
   description = "A mapping of tags to assign to the virtual network resource."
   type        = map(string)
   default     = {}
+}
+
+
+variable "subnet_management_enabled" {
+  description = "Whether subnet management is enabled within this virtual network module, if false you can use subnet module for IaC management of subnet by achieving state separation."
+  type        = bool
+  default     = false
 }
 
 variable "subnets" {
