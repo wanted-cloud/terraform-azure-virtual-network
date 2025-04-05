@@ -35,3 +35,10 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Examples testing local files
+examples/*/.terraform
+examples/*/.terraform.lock.hcl
+examples/*/*.tfstate
+examples/*/*.tfstate.backup
+examples/*/providers.tf

@@ -1,11 +1,14 @@
 locals {
-  // This definition must remain here to keep module metadata working
-  module_metadata = {}
-  // Here you can add your own local definitions
-  local_peerings = [
-    for peering in var.virtual_network_peerings : peering if peering.type != "global"
-  ]
-  global_peerings = [
-    for peering in var.virtual_network_peerings : peering if peering.type == "global"
-  ]
+  metadata = {
+    validator_expressions = {
+
+      resource_group_name  = "^.*$"
+      virtual_network_name = "^.*$"
+
+    }
+    validator_error_messages = {
+      resource_group_name  = "The value of \"resource_group_name\" must be a string following the displayed regular expression pattern."
+      virtual_network_name = "The value of \"name\" must be a string following the displayed regular expression pattern."
+    }
+  }
 }

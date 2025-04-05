@@ -1,26 +1,60 @@
-variable "virtual_network_name" {
-  description = "The name of the virtual network"
+variable "name" {
+  description = "The name of the virtual network to be provisioned."
   type        = string
+
+  validation {
+    error_message = local.metadata.validator_error_messages.virtual_network_name
+    condition = can(
+      regex(
+        local.metadata.validator_expressions.virtual_network_name,
+        var.virtual_network_name
+      )
+    )
+  }
+}
+
+variable "location" {
+  description = "The location/region where the virtual network will be created."
+  type        = string
+  default     = "North Europe"
+
+  validation {
+    error_message = local.metadata.validator_error_messages.allowed_locations
+    condition = contains(
+      local.metadata.validator_expressions.allowed_locations,
+      var.location
+    )
+  }
 }
 
 variable "resource_group_name" {
-  description = "The location/region where the virtual network will be created"
+  description = "The location/region where the virtual network will be created."
   type        = string
+
+  validation {
+    error_message = local.metadata.validator_error_messages.resource_group_name
+    condition = can(
+      regex(
+        local.metadata.validator_expressions.resource_group_name,
+        var.resource_group_name
+      )
+    )
+  }
 }
 
 variable "address_spaces" {
-  description = "The address spaces that will be used by the virtual network"
+  description = "The address spaces that will be used by the virtual network."
   type        = list(string)
 }
 
 variable "dns_servers" {
-  description = "The DNS servers that will be used by the virtual network"
+  description = "The DNS servers that will be used by the virtual network."
   type        = list(string)
   default     = []
 }
 
 variable "private_dns_zones" {
-  description = "The private DNS zones that will be linked to the virtual network"
+  description = "The private DNS zones that will be linked to the virtual network."
   type = list(object({
     link_name             = string
     resource_group_name   = optional(string, "")
@@ -56,6 +90,12 @@ variable "virtual_network_peerings" {
     remote_virtual_network_id = string
   }))
   default = []
+}
+
+variable "tags" {
+  description = "A mapping of tags to assign to the virtual network resource."
+  type        = map(string)
+  default     = {}
 }
 
 variable "subnets" {
