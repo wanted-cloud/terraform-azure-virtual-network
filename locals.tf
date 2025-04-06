@@ -1,5 +1,6 @@
 locals {
-  metadata = {
+  definitions = {
+    tags = { ManagedBy = "Terraform" }
     validator_expressions = {
 
       resource_group_name  = "^.*$"

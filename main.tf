@@ -16,7 +16,6 @@ resource "azurerm_virtual_network" "this" {
   bgp_community = var.bgp_community != "" ? var.bgp_community : null
   edge_zone     = var.edge_zone != "" ? var.edge_zone : null
 
-
   tags = local.metadata.tags
 
 }
@@ -33,12 +32,11 @@ resource "azurerm_virtual_network" "this" {
   bgp_community = var.bgp_community != "" ? var.bgp_community : null
   edge_zone     = var.edge_zone != "" ? var.edge_zone : null
 
-
   tags = local.metadata.tags
 
   lifecycle {
     ignore_changes = [
-      subnets
+      subnet
     ]
   }
 }
