@@ -236,7 +236,7 @@ Module was also published via Terraform Registry and can be used as a module fro
 
 ```hcl
 module "example" {
-  source  = "wanted-cloud/resource-provider-registration/azure"
+  source  = "wanted-cloud/virtual-network/azure"
   version = "x.y.z"
 }
 ```
