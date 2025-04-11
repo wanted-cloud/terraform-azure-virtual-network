@@ -15,7 +15,7 @@ output "virtual_network_address_space" {
 
 output "virtual_network_dns_servers" {
   description = "The DNS servers of the virtual network."
-  value       = length(var.dns_servers) > 0 ? azurerm_virtual_network.this[0].dns_servers[0] : null
+  value       = length(var.dns_servers) > 0 ? azurerm_virtual_network.this : null
 }
 
 output "virtual_network_private_dns_links" {
@@ -26,7 +26,7 @@ output "virtual_network_private_dns_links" {
 output "virtual_network_peerings" {
   description = "The virtual network peerings."
   value = merge(
-    azurerm_virtual_network_peering.out,
-    azurerm_virtual_network_peering.in
+    azurerm_virtual_network_peering.from,
+    azurerm_virtual_network_peering.to
   )
 }   

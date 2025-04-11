@@ -1,10 +1,10 @@
-resource "azurerm_virtual_network_peering" "out" {
+resource "azurerm_virtual_network_peering" "from" {
   for_each = {
-    for peering in var.virtual_network_peerings : peering.name => peering
+    for peering in var.virtual_network_peerings : "${peering.name}-from" => peering
     if peering.type == "from" || peering.type == "both"
   }
-  name                      = each.value.name
-  resource_group_name       = each.value.resource_group_name != "" ? each.value.resource_group_name : var.resource_group_name
+  name                      = "${each.value.name}-from"
+  resource_group_name       = data.azurerm_resource_group.this.name
   virtual_network_name      = var.subnet_management_enabled == true ? azurerm_virtual_network.this[0].id : azurerm_virtual_network.ignored_subnet_management[0].id
   remote_virtual_network_id = each.value.remote_virtual_network_id
 
@@ -38,15 +38,15 @@ resource "azurerm_virtual_network_peering" "out" {
   }
 }
 
-resource "azurerm_virtual_network_peering" "in" {
+resource "azurerm_virtual_network_peering" "to" {
   for_each = {
-    for peering in var.virtual_network_peerings : peering.name => peering
+    for peering in var.virtual_network_peerings : "${peering.name}-to" => peering
     if peering.type == "to" || peering.type == "both"
   }
 
-  name                      = each.value.name
-  resource_group_name       = each.value.resource_group_name != "" ? each.value.resource_group_name : var.resource_group_name
-  virtual_network_name      = split("/", each.value.remote_virtual_network_id)[7]
+  name                      = "${each.value.name}-to"
+  resource_group_name       = split("/", each.value.remote_virtual_network_id)[4]
+  virtual_network_name      = split("/", each.value.remote_virtual_network_id)[8]
   remote_virtual_network_id = var.subnet_management_enabled == true ? azurerm_virtual_network.this[0].id : azurerm_virtual_network.ignored_subnet_management[0].id
 
   allow_virtual_network_access           = each.value.allow_virtual_network_access

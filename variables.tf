@@ -60,9 +60,9 @@ variable "virtual_network_peerings" {
   description = "The virtual network peerings that will be created"
   type = list(object({
     name                                   = string
-    type                                   = string
-    resource_group_name                    = optional(string, "")
     remote_virtual_network_id              = string
+    resource_group_name                    = optional(string, "")
+    type                                   = optional(string, "both")
     allow_virtual_network_access           = optional(bool, true)
     allow_forwarded_traffic                = optional(bool, true)
     allow_gateway_transit                  = optional(bool, false)
@@ -92,18 +92,21 @@ variable "subnet_management_enabled" {
 variable "subnets" {
   description = "List of subnets to be created in the virtual network"
   type = list(object({
-    subnet_name                                   = string
+    name                                          = string
     address_prefixes                              = list(string)
-    default_outbound_access_enabled               = bool
-    service_endpoints                             = list(string)
-    service_endpoints_policy_ids                  = list(string)
-    private_endpoint_network_policies             = string
-    private_link_service_network_policies_enabled = bool
-    delegations = list(object({
+    security_group                                = optional(string, null)
+    default_outbound_access_enabled               = optional(bool, true)
+    private_endpoint_network_policies             = optional(string, "Disabled")
+    private_link_service_network_policies_enabled = optional(bool, true)
+    route_table_id                                = optional(string, null)
+    service_endpoints                             = optional(list(string), [])
+    service_endpoint_policy_ids                   = optional(list(string), [])
+
+    delegations = optional(list(object({
       name            = string
       service_name    = string
-      service_actions = list(string)
-    }))
+      service_actions = optional(list(string), [])
+    })), [])
   }))
   default = []
 }

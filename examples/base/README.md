@@ -1,0 +1,1 @@
+# wanted-cloud/terraform-azure-virtual-network/basic-example

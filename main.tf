@@ -17,6 +17,32 @@ resource "azurerm_virtual_network" "this" {
   // To not cause conflict with azurerm_virtual_network_dns_servers this should never be set
   dns_servers = []
 
+  dynamic "subnet" {
+    for_each = { for subnet in var.subnets : subnet.name => subnet }
+    content {
+      name                                          = subnet.value.name
+      address_prefixes                              = subnet.value.address_prefixes
+      security_group                                = subnet.value.security_group
+      default_outbound_access_enabled               = subnet.value.default_outbound_access_enabled
+      private_endpoint_network_policies             = subnet.value.private_endpoint_network_policies
+      private_link_service_network_policies_enabled = subnet.value.private_link_service_network_policies_enabled
+      route_table_id                                = subnet.value.route_table_id
+      service_endpoints                             = subnet.value.service_endpoints
+      service_endpoint_policy_ids                   = subnet.value.service_endpoint_policy_ids
+
+      dynamic "delegation" {
+        for_each = { for delegation in subnet.value.delegations : delegation.name => delegation }
+        content {
+          name = delegation.value.name
+          service_delegation {
+            name    = delegation.value.service_name
+            actions = delegation.value.service_actions
+          }
+        }
+      }
+    }
+  }
+
   timeouts {
     create = try(
       local.metadata.resource_timeouts["azurerm_virtual_network"]["create"],

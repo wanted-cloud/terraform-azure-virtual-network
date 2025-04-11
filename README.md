@@ -153,18 +153,21 @@ Type:
 
 ```hcl
 list(object({
-    subnet_name                                   = string
+    name                                          = string
     address_prefixes                              = list(string)
-    default_outbound_access_enabled               = bool
-    service_endpoints                             = list(string)
-    service_endpoints_policy_ids                  = list(string)
-    private_endpoint_network_policies             = string
-    private_link_service_network_policies_enabled = bool
-    delegations = list(object({
+    security_group                                = optional(string, null)
+    default_outbound_access_enabled               = optional(bool, true)
+    private_endpoint_network_policies             = optional(string, "Disabled")
+    private_link_service_network_policies_enabled = optional(bool, true)
+    route_table_id                                = optional(string, null)
+    service_endpoints                             = optional(list(string), [])
+    service_endpoint_policy_ids                   = optional(list(string), [])
+
+    delegations = optional(list(object({
       name            = string
       service_name    = string
-      service_actions = list(string)
-    }))
+      service_actions = optional(list(string), [])
+    })), [])
   }))
 ```
 
@@ -187,9 +190,9 @@ Type:
 ```hcl
 list(object({
     name                                   = string
-    type                                   = string
-    resource_group_name                    = optional(string, "")
     remote_virtual_network_id              = string
+    resource_group_name                    = optional(string, "")
+    type                                   = optional(string, "both")
     allow_virtual_network_access           = optional(bool, true)
     allow_forwarded_traffic                = optional(bool, true)
     allow_gateway_transit                  = optional(bool, false)
@@ -240,8 +243,8 @@ The following resources are used by this module:
 - [azurerm_virtual_network.ignored_subnet_management](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [azurerm_virtual_network.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [azurerm_virtual_network_dns_servers.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_dns_servers) (resource)
-- [azurerm_virtual_network_peering.in](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) (resource)
-- [azurerm_virtual_network_peering.out](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) (resource)
+- [azurerm_virtual_network_peering.from](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) (resource)
+- [azurerm_virtual_network_peering.to](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) (resource)
 - [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) (data source)
 
 ## Usage
