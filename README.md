@@ -19,13 +19,13 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>=4.17.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>=4.20.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>=4.17.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>=4.20.0)
 
 ## Required Inputs
 
@@ -91,7 +91,7 @@ Description: The location/region where the virtual network will be created.
 
 Type: `string`
 
-Default: `"North Europe"`
+Default: `""`
 
 ### <a name="input_metadata"></a> [metadata](#input\_metadata)
 
@@ -127,9 +127,11 @@ Type:
 
 ```hcl
 list(object({
-    link_name             = string
+    name                  = string
     resource_group_name   = optional(string, "")
+    registration_enabled  = optional(bool, false)
     private_dns_zone_name = string
+    tags                  = optional(map(string), {})
   }))
 ```
 
@@ -184,10 +186,19 @@ Type:
 
 ```hcl
 list(object({
-    name                      = string
-    type                      = string
-    resource_group_name       = optional(string, "")
-    remote_virtual_network_id = string
+    name                                   = string
+    type                                   = string
+    resource_group_name                    = optional(string, "")
+    remote_virtual_network_id              = string
+    allow_virtual_network_access           = optional(bool, true)
+    allow_forwarded_traffic                = optional(bool, true)
+    allow_gateway_transit                  = optional(bool, false)
+    use_remote_gateways                    = optional(bool, false)
+    local_subnet_names                     = optional(list(string), [])
+    remote_subnet_names                    = optional(list(string), [])
+    only_ipv6_peering_enabled              = optional(bool, false)
+    peer_complete_virtual_networks_enabled = optional(bool, true)
+    triggers                               = optional(map(string), {})
   }))
 ```
 
@@ -226,6 +237,7 @@ Description: The private DNS zone virtual network links.
 The following resources are used by this module:
 
 - [azurerm_private_dns_zone_virtual_network_link.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) (resource)
+- [azurerm_virtual_network.ignored_subnet_management](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [azurerm_virtual_network.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [azurerm_virtual_network_dns_servers.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_dns_servers) (resource)
 - [azurerm_virtual_network_peering.in](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) (resource)
@@ -253,7 +265,7 @@ The minimal usage for the module is as follows:
 module "example" {
     source               = "../.."
     name                 = "example-vnet"
-    resource_group_name  = "example-resource-group"
+    resource_group_name  = "example-rg"
     address_spaces       = ["10.0.0.0/16"]
 }
 ```

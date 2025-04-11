@@ -1,16 +1,16 @@
 output "virtual_network_id" {
   description = "The ID of the virtual network."
-  value       = azurerm_virtual_network.this[0].id
+  value       = var.subnet_management_enabled == true ? azurerm_virtual_network.this[0].id : azurerm_virtual_network.ignored_subnet_management[0].id
 }
 
 output "virtual_network_name" {
   description = "The name of the virtual network."
-  value       = azurerm_virtual_network.this[0].name
+  value       = var.subnet_management_enabled == true ? azurerm_virtual_network.this[0].name : azurerm_virtual_network.ignored_subnet_management[0].name
 }
 
 output "virtual_network_address_space" {
   description = "The address space of the virtual network."
-  value       = azurerm_virtual_network.this[0].address_space
+  value       = var.subnet_management_enabled == true ? azurerm_virtual_network.this[0].address_space : azurerm_virtual_network.ignored_subnet_management[0].address_space
 }
 
 output "virtual_network_dns_servers" {

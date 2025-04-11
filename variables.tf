@@ -1,45 +1,18 @@
 variable "name" {
   description = "The name of the virtual network to be provisioned."
   type        = string
-
-  validation {
-    error_message = local.metadata.validator_error_messages.virtual_network_name
-    condition = can(
-      regex(
-        local.metadata.validator_expressions.virtual_network_name,
-        var.name
-      )
-    )
-  }
 }
 
 variable "location" {
   description = "The location/region where the virtual network will be created."
   type        = string
-  default     = "North Europe"
-
-  validation {
-    error_message = local.metadata.validator_error_messages.allowed_locations
-    condition = contains(
-      local.metadata.validator_expressions.allowed_locations,
-      var.location
-    )
-  }
+  default     = ""
 }
 
 variable "resource_group_name" {
   description = "The location/region where the virtual network will be created."
   type        = string
 
-  validation {
-    error_message = local.metadata.validator_error_messages.resource_group_name
-    condition = can(
-      regex(
-        local.metadata.validator_expressions.resource_group_name,
-        var.resource_group_name
-      )
-    )
-  }
 }
 
 variable "address_spaces" {
@@ -56,9 +29,11 @@ variable "dns_servers" {
 variable "private_dns_zones" {
   description = "The private DNS zones that will be linked to the virtual network."
   type = list(object({
-    link_name             = string
+    name                  = string
     resource_group_name   = optional(string, "")
+    registration_enabled  = optional(bool, false)
     private_dns_zone_name = string
+    tags                  = optional(map(string), {})
   }))
   default = []
 }
@@ -84,10 +59,19 @@ variable "flow_timeout_in_minutes" {
 variable "virtual_network_peerings" {
   description = "The virtual network peerings that will be created"
   type = list(object({
-    name                      = string
-    type                      = string
-    resource_group_name       = optional(string, "")
-    remote_virtual_network_id = string
+    name                                   = string
+    type                                   = string
+    resource_group_name                    = optional(string, "")
+    remote_virtual_network_id              = string
+    allow_virtual_network_access           = optional(bool, true)
+    allow_forwarded_traffic                = optional(bool, true)
+    allow_gateway_transit                  = optional(bool, false)
+    use_remote_gateways                    = optional(bool, false)
+    local_subnet_names                     = optional(list(string), [])
+    remote_subnet_names                    = optional(list(string), [])
+    only_ipv6_peering_enabled              = optional(bool, false)
+    peer_complete_virtual_networks_enabled = optional(bool, true)
+    triggers                               = optional(map(string), {})
   }))
   default = []
 }
